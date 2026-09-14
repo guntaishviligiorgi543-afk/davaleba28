@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MOVIEBASE | Admin Dashboard</title>
+
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="style.css" />
+
+     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body class="admin-body">
+    <div class="admin-wrapper">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <a href="index.html"> <span class="logo">MOVIEBASE</span> </a>
+        </div>
+
+        <nav class="sidebar-nav">
+          <a href="#dash-stats" class="sidebar-link active">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect width="7" height="9" x="3" y="3" rx="1" />
+              <rect width="7" height="5" x="14" y="3" rx="1" />
+              <rect width="7" height="9" x="14" y="12" rx="1" />
+              <rect width="7" height="5" x="3" y="16" rx="1" />
+            </svg>
+            Dashboard
+          </a>
+          <a href="#dash-movies" class="sidebar-link">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="M7 3v18" />
+              <path d="M3 12h18" />
+              <path d="M17 3v18" />
+            </svg>
+            Movies
+          </a>
+          <button id="btn-open-add" class="sidebar-btn">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 8v8" />
+              <path d="M8 12h8" />
+            </svg>
+            Add Movie
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <a href="index.html" class="btn-back">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="m12 19-7-7 7-7" />
+              <path d="M19 12H5" />
+            </svg>
+            Back to Website
+          </a>
+        </div>
+      </aside>
+
+      <!-- MAIN ADMIN AREA -->
+      <main class="admin-content">
+        <!-- TOP HEADER -->
+        <header class="admin-topbar">
+          <button
+            class="hamburger"
+            id="sidebar-toggle"
+            aria-label="Toggle Menu"
+          >
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+          </button>
+          <h2>Movie Management</h2>
+        </header>
+
+        <div class="admin-container">
+          <!-- DASHBOARD STATS -->
+          <section id="dash-stats" class="dashboard-section">
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-info">
+                  <h3>Total Movies</h3>
+                  <p id="stat-total" class="stat-value">-</p>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-info">
+                  <h3>Average Rating</h3>
+                  <p id="stat-avg-rating" class="stat-value">-</p>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-info">
+                  <h3>Latest Year</h3>
+                  <p id="stat-latest" class="stat-value">-</p>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-info">
+                  <h3>Genres</h3>
+                  <p id="stat-genres" class="stat-value">-</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+           <section id="dash-movies" class="admin-table-section">
+             <div class="admin-toolbar">
+              <div class="control-group search-group">
+                <input
+                  type="text"
+                  id="dash-search"
+                  placeholder="Search title, director, genre..."
+                />
+              </div>
+
+              <div class="control-group">
+                <select id="dash-genre-filter">
+                  <option value="all">All Genres</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <select id="dash-sort">
+                  <option value="default">Default Sort</option>
+                  <option value="rating-desc">Rating: High to Low</option>
+                  <option value="rating-asc">Rating: Low to High</option>
+                  <option value="year-desc">Year: Newest</option>
+                  <option value="year-asc">Year: Oldest</option>
+                  <option value="title-asc">Title: A-Z</option>
+                </select>
+              </div>
+
+              <button id="btn-add-movie-top" class="btn-primary">
+                + Add New Movie
+              </button>
+            </div>
+
+             <div id="dash-alert" class="alert-box hidden"></div>
+
+            <!-- TABLE CONTAINER -->
+            <div class="table-responsive">
+              <table class="admin-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Poster</th>
+                    <th>Title</th>
+                    <th>Genre</th>
+                    <th>Year</th>
+                    <th>Rating</th>
+                    <th>Director</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="movies-table-body">
+                  <!-- Dynamically populated rows -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Loading & Empty States -->
+            <div id="dash-loading" class="status-message">
+              <div class="spinner"></div>
+              <p>Loading database table...</p>
+            </div>
+
+            <div id="dash-empty" class="status-message hidden">
+              <p>No records match your criteria.</p>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- ADD / EDIT MOVIE MODAL FORM -->
+    <div id="movie-form-modal" class="modal-overlay hidden">
+      <div class="modal-content admin-modal">
+        <button id="form-modal-close" class="modal-close-btn">&times;</button>
+        <h3 id="form-modal-title">Add New Movie</h3>
+
+        <form id="movie-form">
+          <input type="hidden" id="movie-id" />
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="form-title">Movie Title *</label>
+              <input
+                type="text"
+                id="form-title"
+                required
+                placeholder="e.g. Inception"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="form-genre">Genre *</label>
+              <input
+                type="text"
+                id="form-genre"
+                required
+                placeholder="e.g. Sci-Fi"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="form-year">Year *</label>
+              <input
+                type="number"
+                id="form-year"
+                required
+                placeholder="e.g. 2010"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="form-rating">Rating (0-10) *</label>
+              <input
+                type="number"
+                step="0.1"
+                min="0"
+                max="10"
+                id="form-rating"
+                required
+                placeholder="e.g. 8.8"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="form-director">Director *</label>
+              <input
+                type="text"
+                id="form-director"
+                required
+                placeholder="e.g. Christopher Nolan"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="form-image">Image Poster URL</label>
+              <input type="url" id="form-image" placeholder="https://..." />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="form-description">Description *</label>
+              <textarea
+                id="form-description"
+                rows="3"
+                required
+                placeholder="Short summary..."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" id="btn-cancel-form" class="btn-secondary">
+              Cancel
+            </button>
+            <button type="submit" id="btn-save-movie" class="btn-primary">
+              Save Movie
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+  </body>
+</html>

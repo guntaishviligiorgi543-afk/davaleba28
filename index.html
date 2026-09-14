@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MOVIEBASE | Home</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+     <header class="header">
+      <div class="container navbar">
+        <a href="index.html" class="logo">MOVIEBASE</a>
+        <nav class="nav-links">
+          <a href="index.html" class="nav-link active">Home</a>
+          <a href="dashboard.html" class="nav-link">Dashboard</a>
+        </nav>
+        <button class="hamburger" id="hamburger-btn" aria-label="Toggle Menu">
+          <span class="bar"></span>
+          <span class="bar"></span>
+          <span class="bar"></span>
+        </button>
+      </div>
+      <nav class="mobile-menu" id="mobile-menu">
+        <a href="index.html" class="mobile-nav-link">Home</a>
+        <a href="dashboard.html" class="mobile-nav-link">Dashboard</a>
+      </nav>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container">
+      <section class="dashboard-section">
+        <div class="dashboard-header">
+          <h1>Movie Collection</h1>
+          <p class="subtitle">Explore our movie collection</p>
+        </div>
+
+        <!-- STATS BANNER -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect width="18" height="18" x="3" y="3" rx="2" />
+                <path d="M7 3v18" />
+                <path d="M3 12h18" />
+                <path d="M17 3v18" />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <h3>Total Movies</h3>
+              <p id="stat-total" class="stat-value">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon icon-gold">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+              >
+                <polygon
+                  points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+                />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <h3>Average Rating</h3>
+              <p id="stat-avg-rating" class="stat-value">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <rect width="18" height="18" x="3" y="4" rx="2" />
+                <line x1="16" x2="16" y1="2" y2="6" />
+                <line x1="8" x2="8" y1="2" y2="6" />
+                <line x1="3" x2="21" y1="10" y2="10" />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <h3>Latest Movie</h3>
+              <p id="stat-latest" class="stat-value">-</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"
+                />
+                <circle cx="7" cy="7" r=".5" fill="currentColor" />
+              </svg>
+            </div>
+            <div class="stat-info">
+              <h3>Total Genres</h3>
+              <p id="stat-genres" class="stat-value">-</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MOVIES SECTION -->
+      <section class="movies-section">
+        <div class="controls-bar">
+          <div class="control-group search-group">
+            <label for="search-input">Search</label>
+            <input
+              type="text"
+              id="search-input"
+              placeholder="Search title, director, genre..."
+            />
+          </div>
+
+          <div class="control-group">
+            <label for="genre-select">Genre</label>
+            <select id="genre-select">
+              <option value="all">All Genres</option>
+            </select>
+          </div>
+
+          <div class="control-group">
+            <label for="sort-select">Sort By</label>
+            <select id="sort-select">
+              <option value="default">Default</option>
+              <option value="rating-desc">Rating: High to Low</option>
+              <option value="rating-asc">Rating: Low to High</option>
+              <option value="year-desc">Year: Newest</option>
+              <option value="year-asc">Year: Oldest</option>
+              <option value="title-asc">Title: A-Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="loading-state" class="status-message">
+          <div class="spinner"></div>
+          <p>Loading movies...</p>
+        </div>
+
+        <div id="error-state" class="status-message hidden">
+          <p id="error-text">Failed to load movies.</p>
+        </div>
+
+        <div id="empty-state" class="status-message hidden">
+          <p>No movies found matching your criteria.</p>
+        </div>
+
+        <div id="movies-grid" class="movies-grid"></div>
+      </section>
+    </main>
+
+    <!-- MOVIE MODAL -->
+    <div id="movie-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <button id="modal-close" class="modal-close-btn">&times;</button>
+        <div class="modal-body">
+          <img id="modal-img" src="" alt="Poster" class="modal-poster" />
+          <div class="modal-info">
+            <h2 id="modal-title"></h2>
+            <div class="modal-meta">
+              <span id="modal-genre" class="badge"></span>
+              <span id="modal-year"></span>
+              <span id="modal-rating" class="modal-rating-badge"></span>
+            </div>
+            <p class="modal-director">
+              <strong>Director:</strong> <span id="modal-director"></span>
+            </p>
+            <div class="modal-description-box">
+              <h4>Description</h4>
+              <p id="modal-description"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="container footer-content">
+        <span class="logo">MOVIEBASE</span>
+        <p>Simple movie database dashboard</p>
+        <p class="copyright">&copy; 2026 MovieBase</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
